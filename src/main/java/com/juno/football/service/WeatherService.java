@@ -25,4 +25,3 @@ public class WeatherService {
         return weather.getHumidity() > 85.0 || weather.getRainIntensity() > 2.0;
     }
 }
-

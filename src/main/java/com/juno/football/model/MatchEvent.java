@@ -6,14 +6,16 @@ import java.util.List;
 
 public class MatchEvent {
     private Long id;
-    private EventType eventType;              // Тип события (Футбол, Фифа, Дети)
-    private String location;                  // Локация (например, MetroCity Mall Spot)
-    private LocalDateTime dateTime;           // Дата и время
-    private int maxCapacity;                  // Players limit (например, 12)
-    private double priceGel;                  // Цена в лари (GEL)
+    private EventType eventType;
+    private String location;
+    private LocalDateTime dateTime;
+    private int maxCapacity;
+    private double priceGel;
 
     private List<Player> activeRoster = new ArrayList<>();
     private List<Player> waitlist = new ArrayList<>();
+
+    public MatchEvent() {}
 
     public MatchEvent(Long id, EventType eventType, String location, LocalDateTime dateTime, int maxCapacity, double priceGel) {
         this.id = id;
@@ -24,12 +26,20 @@ public class MatchEvent {
         this.priceGel = priceGel;
     }
 
-    // Геттеры
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public EventType getEventType() { return eventType; }
+    public void setEventType(EventType eventType) { this.eventType = eventType; }
     public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    public LocalDateTime getDateTime() { return dateTime; }
+    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
     public int getMaxCapacity() { return maxCapacity; }
+    public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
     public double getPriceGel() { return priceGel; }
+    public void setPriceGel(double priceGel) { this.priceGel = priceGel; }
     public List<Player> getActiveRoster() { return activeRoster; }
+    public void setActiveRoster(List<Player> activeRoster) { this.activeRoster = activeRoster; }
     public List<Player> getWaitlist() { return waitlist; }
+    public void setWaitlist(List<Player> waitlist) { this.waitlist = waitlist; }
 }

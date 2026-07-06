@@ -9,47 +9,38 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MatchService {
-
     private final MatchRepository matchRepository;
-    private final WeatherService weatherService; // Подключаем наш новый погодный сервис
+    private final WeatherService weatherService;
+    private final TelegramPushService telegramPushService;
 
-    // Спринг автоматически внедрит оба сервиса сюда
-    public MatchService(MatchRepository matchRepository, WeatherService weatherService) {
+    public MatchService(MatchRepository matchRepository, WeatherService weatherService, TelegramPushService telegramPushService) {
         this.matchRepository = matchRepository;
         this.weatherService = weatherService;
+        this.telegramPushService = telegramPushService;
     }
 
-    /**
-     * Метод создания матча организатором с проверкой погоды (Сценарий №1)
-     * Возвращает текст-предупреждение или подтверждение создания.
-     */
     public String createMatchWithWeatherCheck(MatchEvent match) {
-        // 1. Спрашиваем у сервиса, какая сейчас погода в Батуми
         WeatherInfo currentWeather = weatherService.getWeatherForBatumi();
 
-        // 2. Проверяем риски по ТЗ (влажность > 85% или дождь > 2.0 мм/ч)
         if (weatherService.hasSevereWeatherRisks(currentWeather)) {
-            // Возвращаем Soft Block интерфейс (сообщение для Роминого бота)
             return "SOFT_BLOCK: Внимание! В Батуми высокая влажность (" + currentWeather.getHumidity()
                     + "%) или сильный дождь (" + currentWeather.getRainIntensity()
                     + " мм/ч). Вы уверены, что хотите опубликовать матч?";
         }
 
-        // 3. Если всё отлично - сохраняем матч в память
         matchRepository.save(match);
+
+        telegramPushService.sendEventAnnouncement(match);
+
         return "SUCCESS: Матч успешно создан и опубликован в каналах Sport Park Batumi!";
     }
 
-    /**
-     * Метод принудительного создания (если организатор нажал кнопку "Всё равно создать")
-     */
     public void forceCreateMatch(MatchEvent match) {
         matchRepository.save(match);
+
+        telegramPushService.sendEventAnnouncement(match);
     }
 
-    /**
-     * Логика кнопки "+ Apply" (остается без изменений)
-     */
     public RegistrationStatus registerPlayer(Long matchId, Player player) {
         MatchEvent match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new IllegalArgumentException("Матч с ID " + matchId + " не найден"));

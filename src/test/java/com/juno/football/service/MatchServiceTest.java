@@ -20,16 +20,19 @@ public class MatchServiceTest {
     private MatchRepository matchRepository;
     private WeatherService weatherService;
     private MatchService matchService;
+    private TelegramPushService telegramPushService;
 
     @BeforeEach
     void setUp() {
         // Создаём виртуальные "заглушки" (Mocks) вместо реальных объектов
         matchRepository = Mockito.mock(MatchRepository.class);
         weatherService = Mockito.mock(WeatherService.class);
+        telegramPushService = Mockito.mock(TelegramPushService.class);
 
         // Передаём их в наш сервис
-        matchService = new MatchService(matchRepository, weatherService);
+        matchService = new MatchService(matchRepository, weatherService, telegramPushService);
     }
+
 
     @Test
     void shouldAddPlayerToWaitlistWhenMatchIsFull() {
